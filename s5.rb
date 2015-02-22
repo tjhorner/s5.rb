@@ -11,9 +11,8 @@ class S5
 		@secret = secret
 	end
 
-	def oauth_url(callback, extended = false)
-		extended = extended ? "&scope=extended" : ""
-		return @@s5_base + "/oauth/" + @token + "?return=" + CGI.escape(callback) + extended
+	def get_oauth_uri(callback, scope = "")
+		return @@s5_base + "/oauth/" + @token + "?return=" + CGI.escape(callback) + "&scope=" + CGI.escape(scope)
 	end
 
 	# will return nil on fail
@@ -27,12 +26,12 @@ class S5
 	end
 
 	# get access code from successful authorization
-	def request_access_token(code)
-		return get("oauth/exchange", {:code => code})
+	def exchange_code(code)
+		return get("oauth/exchange", {:code => code, :secret => @secret})
 	end
 
 	# get a user
-	def user(username)
+	def get_user(username)
 		res = get("user", {:username => username})
 		res = res.is_a?(String) ? JSON.parse(res) : nil
 		return res
@@ -40,7 +39,7 @@ class S5
 
 	# get user w/ access token
 	def me(access_token)
-		res = get("user/me", {:access_token => access_token})
+		res = get("user/me", {:access_token => access_token, :secret => @secret})
 		res = res.is_a?(String) ? JSON.parse(res) : nil
 		return res
 	end

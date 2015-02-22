@@ -3,18 +3,20 @@
 ## Example usage
 
 ```ruby
-# create a new S5 instance
-app = S5.new("YOUR-TOKEN", "YOUR-SECRET")
+require 's5'
 
-# direct the user to this url
-app.oauth_url("http://example.com/oauth/s5", true)
+# Create an s5 instance with your API credentials
+sso = S5.new("YOUR-TOKEN", "YOUR-SECRET")
 
-# returns a hash with the specified user's info, does not require access token
-app.user("tjhorner")
+# Get the OAuth URI with extended privileges
+sso.get_oauth_uri("http://example.com/oauth/s5", "extended")
 
-# once you have the auth code from the user
-access_token = app.request_access_token("AUTH-CODE")
+# Exchange the provided code for an access token
+sso.exchange_code("AUTH-CODE")
 
-# returns a hash with the user info
-app.me(access_token)
+# Get a user
+sso.get_user("tjhorner")
+
+# Get user from access token
+sso.me(access_token)
 ```
